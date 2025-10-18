@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gold Price Predictor</title>
+  <style>
+    body {
+      font-family: "Poppins", sans-serif;
+      background: linear-gradient(135deg, #f6d365, #fda085);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      margin: 0;
+    }
+
+    h2 {
+      color: #333;
+      margin-bottom: 20px;
+    }
+
+    .container {
+      background-color: white;
+      border-radius: 12px;
+      padding: 25px 40px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+      text-align: center;
+    }
+
+    input {
+      width: 250px;
+      padding: 10px;
+      margin: 10px 0;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      font-size: 16px;
+    }
+
+    button {
+      background-color: #ffb347;
+      color: white;
+      border: none;
+      padding: 12px 30px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 16px;
+      transition: 0.3s;
+    }
+
+    button:hover {
+      background-color: #ff9800;
+    }
+
+    #output {
+      margin-top: 20px;
+      font-size: 18px;
+      font-weight: bold;
+      color: #333;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Gold Price Prediction</h2>
+
+    <input type="number" id="spx" placeholder="Enter SPX value"><br>
+    <input type="number" id="uso" placeholder="Enter USO value"><br>
+    <input type="number" id="slv" placeholder="Enter SLV value"><br>
+    <input type="number" id="eurusd" placeholder="Enter EUR/USD value"><br>
+
+    <button onclick="predict()">Predict</button>
+
+    <div id="output"></div>
+  </div>
+
+  <script>
+    async function predict() {
+      const spx = parseFloat(document.getElementById("spx").value);
+      const uso = parseFloat(document.getElementById("uso").value);
+      const slv = parseFloat(document.getElementById("slv").value);
+      const eurusd = parseFloat(document.getElementById("eurusd").value);
+
+      if (isNaN(spx) || isNaN(uso) || isNaN(slv) || isNaN(eurusd)) {
+        document.getElementById("output").innerText = "⚠️ Please fill all fields correctly.";
+        return;
+      }
+
+      const response = await fetch("http://127.0.0.1:5000/predict", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ features: [spx, uso, slv, eurusd] })
+      });
+
+      const data = await response.json();
+      document.getElementById("output").innerText =
+        "💰 Predicted Gold Price: $" + data.predicted_gold_price.toFixed(2);
+    }
+  </script>
+</body>
+</html>
